@@ -147,6 +147,46 @@ fn mostrar_eliminados(eliminados: &Vec<Moto>, contraseña: &str) {
     }
 }
 
+// Funcion para buscar motos en cola
+fn buscar_moto_por_id(motos: &Vec<Moto>, id: u32) {
+        for moto in motos.iter() {
+            if moto.id_cola == id.try_into().unwrap() {
+                println!("Moto encontrada:");
+                println!("ID: {}", moto.id_cola);
+                println!("Placa: {}", moto.placa);
+                println!("Marca: {}", moto.marca);
+                println!("Cilindraje: {}cc", moto.cilindraje);
+                println!("Modelo: {}", moto.modelo);
+                println!("Precio: ${}", moto.precio);
+                return;
+            }
+    }
+    println!("No se encontró ninguna moto con el ID {}", id);
+}
+
+// Funcion para buscar motos en cola eliminada
+fn buscar_moto_elim_por_id(motos: &Vec<Moto>, id: u32, contraseña: &str) {
+    if contraseña == "admin123" {
+                for moto in motos.iter() {
+                    if moto.id_cola == id.try_into().unwrap() {
+                        println!("Moto encontrada:");
+                        println!("ID: {}", moto.id_cola);
+                        println!("Placa: {}", moto.placa);
+                        println!("Marca: {}", moto.marca);
+                        println!("Cilindraje: {}cc", moto.cilindraje);
+                        println!("Modelo: {}", moto.modelo);
+                        println!("Precio: ${}", moto.precio);
+                        return;
+                    }
+                }
+                println!("No se encontró ninguna moto con el ID {}", id);
+            
+    } else {
+        println!("Contraseña incorrecta. No se puede acceder a las motos eliminadas.");
+    }
+}
+
+
 // Función para leer una entrada de tipo texto
 fn leer_texto(mensaje: &str) -> String {
     let mut entrada = String::new();
@@ -188,10 +228,12 @@ fn menu(cola: &mut Vec<Moto>, eliminados: &mut Vec<Moto>) {
         println!("1. Agregar moto");
         println!("2. Sacar moto");
         println!("3. Mostrar todas las motos");
-        println!("4. Mostrar placas de las motos en cola (requiere contraseña)");
-        println!("5. Mostrar motos eliminadas (requiere contraseña)");
-        println!("6. Mostrar placas de las motos en cola eliminadas (requiere contraseña)");
-        println!("7. Salir");
+        println!("4. Buscar moto en cola");
+        println!("5. Mostrar placas de las motos en cola (requiere contraseña)");
+        println!("6. Mostrar motos eliminadas (requiere contraseña)");
+        println!("7. Mostrar placas de las motos en cola eliminadas (requiere contraseña)");
+        println!("8. Buscar moto en cola eliminada (requiere contraseña)");
+        println!("9. Salir");
 
         let opcion = leer_entero("Ingrese la opción: ");
 
@@ -199,19 +241,36 @@ fn menu(cola: &mut Vec<Moto>, eliminados: &mut Vec<Moto>) {
             1 => meter(cola),
             2 => sacar(cola, eliminados),
             3 => mostrar(cola),
-            4 => {
+            4 =>{
+                if cola.is_empty() {
+                    println!("No hay motos en la cola.");
+                } else {
+                    let id_busc = leer_entero("Por favor digita el identificador de la moto que quieres buscar el cola");
+                    buscar_moto_por_id(&cola, id_busc);
+                }
+            } 
+            5 => {
                 let contraseña = leer_texto("Ingrese la contraseña: ");
                 mostrar_placas(cola, &contraseña);
             }
-            5 => {
+            6 => {
                 let contraseña = leer_texto("Ingrese la contraseña: ");
                 mostrar_eliminados(eliminados, &contraseña);
             }
-            6 => {
+            7 => {
                 let contraseña = leer_texto("Ingrese la contraseña: ");
                 mostrar_placas_eliminadas(eliminados, &contraseña);
             }
-            7 => {
+            8 =>{
+                if eliminados.is_empty() {
+                    println!("No hay motos eliminadas.");
+                } else {
+                    let contraseña = leer_texto("Ingrese la contraseña: ");
+                    let id_busc = leer_entero("Por favor digita el identificador de la moto que quieres buscar en cola eliminada");
+                    buscar_moto_elim_por_id(&eliminados, id_busc, &contraseña);
+                }
+            } 
+            9 => {
                 println!("Saliendo del programa.");
                 break;
             }
